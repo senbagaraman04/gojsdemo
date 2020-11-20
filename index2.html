@@ -1,0 +1,119 @@
+<!DOCTYPE html> <!-- HTML5 document type -->
+<html lang="en">
+
+<head>
+    <title> Go JS Demo</title>
+    <!-- use go-debug.js when developing and go.js when deploying -->
+
+    <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+
+
+    <script type="text/javascript">
+
+
+        function init() {
+            var $ = go.GraphObject.make;  // for conciseness in defining templates
+
+            var myDiagram = $(go.Diagram, "myDiagramDiv",  // create a Diagram for the DIV HTML element
+                {
+                    "undoManager.isEnabled": true  // enable undo & redo
+                });
+            var model = $(go.GraphLinksModel);
+            model.nodeDataArray =
+                [
+                    { key: "A" },
+                    { key: "B" },
+                    { key: "C" }
+                ];
+            model.linkDataArray =
+                [
+                    { from: "A", to: "B" },
+                    { from: "A", to: "C" },
+                    { from: "B", to: "C" }
+                ];
+            myDiagram.model = model;
+         }
+
+         function treeLayout() {
+            var $ = go.GraphObject.make;
+var myDiagram =
+  $(go.Diagram, "myDiagramDiv2",
+    {
+      "undoManager.isEnabled": true,
+      layout: $(go.TreeLayout, // specify a Diagram.layout that arranges trees
+                { angle: 90, layerSpacing: 35 })
+    });
+
+// the template we defined earlier
+myDiagram.nodeTemplate =
+  $(go.Node, "Horizontal",
+    { background: "#44CCFF" },
+    $(go.Picture,
+      { margin: 10, width: 50, height: 50, background: "red" },
+      new go.Binding("source")),
+    $(go.TextBlock, "Default Text",
+      { margin: 12, stroke: "white", font: "bold 16px sans-serif" },
+      new go.Binding("text", "name"))
+  );
+
+  // define a Link template that routes orthogonally, with no arrowhead
+// myDiagram.linkTemplate =
+//   $(go.Link,
+//     { routing: go.Link.Orthogonal, corner: 5 },
+//     $(go.Shape, // the link's path shape
+//       { strokeWidth: 3, stroke: "#555" }));
+
+var model = $(go.TreeModel);
+model.nodeDataArray =
+[
+  { key: "1",              name: "Don Meow",   source: "assets/cat1.jfif" },
+  { key: "2", parent: "1", name: "Demeter",    source: "assets/cat2.jfif" },
+  { key: "3", parent: "1", name: "Copricat",   source: "assets/cat3.jfif" },
+  { key: "4", parent: "3", name: "Jellylorum", source: "assets/cat4.jfif" },
+  { key: "5", parent: "3", name: "Alonzo",     source: "cat5.png" },
+  { key: "6", parent: "2", name: "Munkustrap", source: "cat6.png" }
+];
+myDiagram.model = model;
+         }
+
+    </script>
+
+
+    <style>
+        div#myDiagramDiv {
+            /* width:500px; height:550px; background-color:#DAE4E4; */
+            border: solid 1px blue;
+            width: 300px;
+            height: 250px
+        }
+
+        div#myDiagramDiv2 {
+            /* width:500px; height:550px; background-color:#DAE4E4; */
+            border: solid 1px blue;
+            width: 700px;
+            height: 350px
+        }
+    </style>
+
+
+</head>
+
+<body onload="init();treeLayout()">
+    <p>
+        In GraphLinksModel, we have a model.linkDataArray 
+        in addition to the model.nodeDataArray. It holds an 
+        array of JavaScript objects, each describing a link by
+         specifying the "to" and "from" node keys. 
+        Here's an example where node A links to node B and where node B links to node C:
+    
+    </p>
+  
+    <div id="myDiagramDiv"></div>
+    Layouts  : Tree layouts
+    <div id="myDiagramDiv2"></div>
+   
+
+
+</body>
+
+</html>
