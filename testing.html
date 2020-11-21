@@ -1,0 +1,134 @@
+<!DOCTYPE html> <!-- HTML5 document type -->
+<html lang="en">
+
+<head>
+    <title> Go JS Demo</title>
+    <!-- use go-debug.js when developing and go.js when deploying -->
+
+    <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+
+    <script type="text/javascript">
+        function init() {
+
+            var $ = go.GraphObject.make;
+            //#1
+            var myDiagram = $(go.Diagram, "myDiagramDiv", {
+                "undoManager.isEnabled": true
+            });
+
+            var myModel = $(go.Model);
+            myModel.nodeDataArray = [
+                { key: "Alpha" },
+                { key: "Beta" },
+                { key: "Gamma" }
+            ];
+            myDiagram.model = myModel;
+
+            //#2
+            var myDiagram2 = $(go.Diagram, "myDiagramDiv2", {
+                "undoManager.isEnabled": true, layout: $(go.TreeLayout, // specify a Diagram.layout that arranges trees
+                { angle: 90, layerSpacing: 35 })
+            });
+           
+
+
+            myDiagram2.nodeTemplate =
+  $(go.Node, "Horizontal",
+    { background: "#44CCFF" },
+    $(go.Picture,
+      { margin: 10, width: 50, height: 50, background: "red" },
+      new go.Binding("source")),
+    $(go.TextBlock, "Default Text",
+      { margin: 12, stroke: "white", font: "bold 16px sans-serif" },
+      new go.Binding("text", "name"))
+  );
+           
+  
+  var myModel2 = $(go.TreeModel);
+            myModel2.nodeDataArray = [
+                {
+                    name: "Delta",  key: "1"          
+                },
+                {
+                    name: "Epsilon",key: "2", parent: "1",
+                },
+                {
+                    name: "Zeta",key: "3", parent: "1",
+                }
+            ]
+
+           
+
+            myDiagram2.model = myModel2;
+
+
+
+
+            //---------------------#3------------------------------
+
+
+            var d = go.GraphObject.make;
+
+            diagram = d(go.Diagram, "my3");
+            diagram.nodeTemplate =  d(go.Node, "Auto", // Shape automatically fits around
+            d(go.Shape,"RoundedRectangle", 
+            //The following line will bind fill to Node.data.color.
+            new go.Binding("fill","color")),
+            d(go.TextBlock,{margin: 5}, new go.Binding("text","key"))
+            );
+
+
+             // the Model holds only the essential information describing the diagram
+      diagram.model = new go.GraphLinksModel(
+      [ // a JavaScript Array of JavaScript objects, one per node;
+        // the "color" property is added specifically for this app
+        { key: "Alpha", color: "lightblue" },
+        { key: "Beta", color: "orange" },
+        { key: "Gamma", color: "lightgreen" },
+        { key: "Delta", color: "pink" }
+      ],
+      [ // a JavaScript Array of JavaScript objects, one per link
+        { from: "Alpha", to: "Beta" },
+        { from: "Alpha", to: "Gamma" },
+        { from: "Beta", to: "Beta" },
+        { from: "Gamma", to: "Delta" },
+        { from: "Delta", to: "Alpha" }
+      ]);
+
+    // enable Ctrl-Z to undo and Ctrl-Y to redo
+    diagram.undoManager.isEnabled = true;
+        }
+
+
+    </script>
+
+
+
+    <style>
+        div#myDiagramDiv,
+        div#myDiagramDiv2, #my3 {
+            /* width:500px; height:550px; background-color:#DAE4E4; */
+            border: solid 1px blue;
+            width: 800px;
+            height: 550px
+        }
+    </style>
+
+
+</head>
+
+<body onload="init()">
+
+
+    <div id="myDiagramDiv"></div>
+
+    <div id="myDiagramDiv2"></div>
+
+
+    <div id="my3"></div>
+
+
+
+</body>
+
+</html>
