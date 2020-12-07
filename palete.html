@@ -7,6 +7,9 @@
   <script src="assets/go-debug.js"> </script>
   <script src="assets/figures.js"> </script>
 
+  <link rel='stylesheet' href='ZoomSlider.css' />
+  <script src="ZoomSlider.js"></script>
+
   <script id="code">
 
     var red = "orangered";  // 0 or false
@@ -20,7 +23,8 @@
         $(go.Diagram, "myDiagramDiv",  // create a new Diagram in the HTML DIV element "myDiagramDiv"
           {
             "draggingTool.isGridSnapEnabled": true,  // dragged nodes will snap to a grid of 10x10 cells
-            "undoManager.isEnabled": true
+            "undoManager.isEnabled": true,
+            "commandHandler.archetypeGroupData": { isGroup: true, text: "Group", horiz: false },
           });
 
       // when the document is modified, add a "*" to the title and enable the "Save" button
@@ -63,6 +67,7 @@
       // define some common property settings
       function nodeStyle() {
         return [new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+    
         new go.Binding("isShadowed", "isSelected").ofObject(),
         {
           selectionAdorned: false,
@@ -71,6 +76,8 @@
           shadowColor: "blue",
           toolTip: sharedToolTip
         }];
+
+        
       }
 
       function shapeStyle() {
@@ -133,14 +140,16 @@
       var outputTemplate =
         $(go.Node, "Spot", nodeStyle(),
           $(go.Shape, "Rectangle", shapeStyle(),
-            { fill: green }),  // override the default fill (from shapeStyle()) to be green
-          $(go.Shape, "Rectangle", portStyle(true),  // the only port
+            { fill: green }),  
+            $(go.TextBlock, "A"),  // "A" port label
+           $(go.Shape, "Rectangle", portStyle(true),  // the only port
             { portId: "", alignment: new go.Spot(0, 0.5) })
         );
 
       var andTemplate =
         $(go.Node, "Spot", nodeStyle(),
           $(go.Shape, "AndGate", shapeStyle()),
+       
           $(go.Shape, "Rectangle", portStyle(true),
             { portId: "in1", alignment: new go.Spot(0, 0.3) }),
          
@@ -246,18 +255,24 @@
 
       // share the template map with the Palette
       palette.nodeTemplateMap = myDiagram.nodeTemplateMap;
+      palette.groupTemplateMap = myDiagram.groupTemplateMap;
 
+      
       palette.model.nodeDataArray = [
         { category: "input" },
         { category: "output" },
         { category: "and" },
         { category: "or" },
+      
         // { category: "xor" },
         // { category: "not" },
         // { category: "nand" },
         // { category: "nor" },
         // { category: "xnor" }
       ];
+
+
+     
 
       // load the initial diagram
       load();
@@ -320,11 +335,18 @@
     var buttontext = obj.elt(1);  // the TextBlock
     alert(buttontext.text + " command on " + node.data.key);
   }
+   
+  zoomSlider = new ZoomSlider(myDiagram);
+
+ 
 
 
 
-    
-  
+
+
+
+
+
     }
 
     // update the diagram every 250 milliseconds
@@ -342,6 +364,12 @@
           doInput(node);
         }
       });
+
+      
+      myDiagram.commandHandler.archetypeGroupData =
+    { key: "Group Name", isGroup: true, color: "green",editable: true };
+  // modify the default group template to allow ungrouping
+  myDiagram.groupTemplate.ungroupable = true;
    
       // now we can do all other kinds of nodes
       myDiagram.nodes.each(function (node) {
@@ -449,6 +477,8 @@ myModel.linkFromPortIdProperty = "fromPort";
 myModel.linkToPortIdProperty = "toPort";
 
 
+
+
       myDiagram.model =myModel;// go.Model.fromJson(document.getElementById("mySavedModel").value);
     }
   </script>
@@ -461,7 +491,14 @@ myModel.linkToPortIdProperty = "toPort";
         style="width: 100px; height: 500px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black">
       </div>
       <div id="myDiagramDiv" style="flex-grow: 1; height: 500px; border: solid 1px black"></div>
+
+
+
     </div>
+
+    <input id="Group" type="button" onclick="myDiagram.commandHandler.groupSelection()" value="Group" />
+    <input id="SelectAll" type="button"
+    onclick="myDiagram.commandHandler.selectAll()" value="Select All" />
  
   </div>
 </body>
