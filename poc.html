@@ -6,6 +6,7 @@
         
   <link rel='stylesheet' href='ZoomSlider.css' />
   <script src="ZoomSlider.js"></script>
+  <script src="RotateMultipleTool.js"></script>
 
         <script id="code">
             function init() {
@@ -18,6 +19,9 @@
                   {
                     // allow double-click in background to create a new node
                     "clickCreatingTool.archetypeNodeData": { text: "Node", color: "white" },
+
+                    // for rotating the nodes
+                    rotatingTool: new RotateMultipleTool(), 
         
                     // allow Ctrl-G to call groupSelection()
                     "commandHandler.archetypeGroupData": { text: "Group", isGroup: true, color: "blue" },
@@ -92,7 +96,7 @@
               // Dragging from the Shape will start drawing a new link.
               myDiagram.nodeTemplate =
                 $(go.Node, "Auto",
-                  { locationSpot: go.Spot.Center },
+                  { locationSpot: go.Spot.Center, rotatable: true },
                   $(go.Shape, "RoundedRectangle",
                     {
                       fill: "white", // the default fill, if there is no data bound value
