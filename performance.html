@@ -7,12 +7,16 @@
   <script src="assets/go-debug.js"> </script>
   <script src="assets/figures.js"> </script>
 
-  <script id="code">
+  <link rel='stylesheet' href='ZoomSlider.css' />
+  <script src="ZoomSlider.js"></script>
 
+  <script id="code">
+ var before_loadtime = new Date().getTime();  
     var red = "orangered";  // 0 or false
     var green = "forestgreen";  // 1 or true
 
     function init() {
+     
       if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
       var $ = go.GraphObject.make;  // for conciseness in defining templates
 
@@ -87,7 +91,6 @@
         return {
           desiredSize: new go.Size(6, 6),
           fill: "black",
-
           fromSpot: go.Spot.Right,
           fromLinkable: !input,
           toSpot: go.Spot.Left,
@@ -114,7 +117,6 @@
             }
           }
         );
-      myDiagram.grid.visible = true;
 
       var outputTemplate =
         $(go.Node, "Spot", nodeStyle(),
@@ -126,39 +128,37 @@
 
       var andTemplate =
         $(go.Node, "Spot", nodeStyle(),
-
           $(go.Shape, "AndGate", shapeStyle()),
-
           $(go.Shape, "Rectangle", portStyle(true),
             { portId: "in1", alignment: new go.Spot(0, 0.3) }),
-
+          $(go.TextBlock, "A"),
           $(go.Shape, "Rectangle", portStyle(true),
-            { portId: "in2", alignment: new go.Spot(0, 0.7) }),       
-
+            { portId: "in2", alignment: new go.Spot(0, 0.7) }),
+          $(go.TextBlock, "b"),
 
           $(go.Shape, "Rectangle", portStyle(false),
             { portId: "out", alignment: new go.Spot(1, 0.5) }),
-
+          $(go.TextBlock, "Out")
         );
 
       var orTemplate =
         $(go.Node, "Spot", nodeStyle(),
           $(go.Shape, "OrGate", shapeStyle()),
           $(go.Shape, "Rectangle", portStyle(true),
-            { width: 6, height: 6, portId: 'in1', alignment: new go.Spot(0.16, 0.3) }),
+            { portId: "in1", alignment: new go.Spot(0.16, 0.3) }),
           $(go.Shape, "Rectangle", portStyle(true),
             { portId: "in2", alignment: new go.Spot(0.16, 0.7) }),
           $(go.Shape, "Rectangle", portStyle(false),
             { portId: "out", alignment: new go.Spot(1, 0.5) })
         );
 
-
-
+ 
       // add the templates created above to myDiagram and palette
       myDiagram.nodeTemplateMap.add("input", inputTemplate);
       myDiagram.nodeTemplateMap.add("output", outputTemplate);
       myDiagram.nodeTemplateMap.add("and", andTemplate);
       myDiagram.nodeTemplateMap.add("or", orTemplate);
+ 
 
       // share the template map with the Palette
       palette.nodeTemplateMap = myDiagram.nodeTemplateMap;
@@ -168,13 +168,15 @@
         { category: "output" },
         { category: "and" },
         { category: "or" },
+ 
       ];
 
       // load the initial diagram
       load();
-
+     console.log( (Date.now()- before_loadtime) / 1000  );
+     zoomSlider = new ZoomSlider(myDiagram);
       // continually update the diagram
-      loop();
+     // loop();
     }
 
     // update the diagram every 250 milliseconds
@@ -192,11 +194,11 @@
           doInput(node);
         }
       });
-
+   
       // now we can do all other kinds of nodes
       myDiagram.nodes.each(function (node) {
-
-
+       
+     
         switch (node.category) {
           case "and": doAnd(node); break;
           case "or": doOr(node); break;
@@ -226,17 +228,40 @@
     }
 
     function doAnd(node) {
-      // console.log(linkIsTrue);
+     // console.log(linkIsTrue);
       var color = node.findLinksInto().all(linkIsTrue) ? green : red;
       setOutputLinks(node, color);
     }
-
+    function doNand(node) {
+      var color = !node.findLinksInto().all(linkIsTrue) ? green : red;
+      setOutputLinks(node, color);
+    }
+    function doNot(node) {
+      var color = !node.findLinksInto().all(linkIsTrue) ? green : red;
+      setOutputLinks(node, color);
+    }
 
     function doOr(node) {
       var color = node.findLinksInto().any(linkIsTrue) ? green : red;
       setOutputLinks(node, color);
     }
+    function doNor(node) {
+      var color = !node.findLinksInto().any(linkIsTrue) ? green : red;
+      setOutputLinks(node, color);
+    }
 
+    function doXor(node) {
+      var truecount = 0;
+      node.findLinksInto().each(function (link) { if (linkIsTrue(link)) truecount++; });
+      var color = truecount % 2 !== 0 ? green : red;
+      setOutputLinks(node, color);
+    }
+    function doXnor(node) {
+      var truecount = 0;
+      node.findLinksInto().each(function (link) { if (linkIsTrue(link)) truecount++; });
+      var color = truecount % 2 === 0 ? green : red;
+      setOutputLinks(node, color);
+    }
 
     function doOutput(node) {
       // assume there is just one input link
@@ -244,31 +269,31 @@
       node.linksConnected.each(function (link) { node.findObject("NODESHAPE").fill = link.findObject("SHAPE").stroke; });
     }
 
-
+    // save a model to and load a model from JSON text, displayed below the Diagram
+    function save() {
+      document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+      myDiagram.isModified = false;
+    }
     function load() {
       var $ = go.GraphObject.make;
       var myModel = $(go.GraphLinksModel);
 
+    var a = [];
 
-      myModel.nodeDataArray = [
-        { category: "input", key: "input1", },
-        { category: "or", key: "or1", },
-        { category: "and", key: "and1", },
-        { category: "output", key: "output1", }
-      ]
+  for(i=0;i<1000;i++)
+  {
+    a.push( { category: "or", key: "or1",  })
+  }
+      myModel.nodeDataArray =a;
 
-      myModel.linkDataArray = [
-        { from: "input1", fromPort: "out", to: "or1", toPort: "in2" },
-        { from: "or1", fromPort: "out", to: "and1", toPort: "in2" },
-        { from: "and1", fromPort: "out", to: "output1", toPort: "in1" }
-      ]
-
-      myModel.linkFromPortIdProperty = "fromPort";
-      myModel.linkToPortIdProperty = "toPort";
+myModel.linkFromPortIdProperty = "fromPort";
+myModel.linkToPortIdProperty = "toPort";
 
 
-      myDiagram.model = myModel;// go.Model.fromJson(document.getElementById("mySavedModel").value);
-    }
+      myDiagram.model =myModel;// go.Model.fromJson(document.getElementById("mySavedModel").value);
+     // zoomSlider = new ZoomSlider(myDiagram);
+
+     }
   </script>
 </head>
 
@@ -280,8 +305,8 @@
       </div>
       <div id="myDiagramDiv" style="flex-grow: 1; height: 500px; border: solid 1px black"></div>
     </div>
+ 
   </div>
-
 </body>
 
 </html>

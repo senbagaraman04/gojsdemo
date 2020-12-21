@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title> With Toolbar </title>
+
+    <script src="assets/go-debug.js"> </script>
+    <script src="assets/figures.js"> </script>
+
+    <link rel='stylesheet' href='ZoomSlider.css' />
+    <script src="ZoomSlider.js"></script>
+
+    <script id="code">
+
+        function init() {
+
+            if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
+            var $ = go.GraphObject.make;  // for conciseness in defining templates
+
+            myDiagram =
+                $(go.Diagram, "myDiagramDiv",  // create a new Diagram in the HTML DIV element "myDiagramDiv"
+                    {
+                        "draggingTool.isGridSnapEnabled": true,  // dragged nodes will snap to a grid of 10x10 cells
+                        "undoManager.isEnabled": true
+                    });
+
+            // when the document is modified, add a "*" to the title and enable the "Save" button
+            myDiagram.addDiagramListener("Modified", function (e) {
+                var button = document.getElementById("saveModel");
+                if (button) button.disabled = !myDiagram.isModified;
+                var idx = document.title.indexOf("*");
+                if (myDiagram.isModified) {
+                    if (idx < 0) document.title += "*";
+                } else {
+                    if (idx >= 0) document.title = document.title.substr(0, idx);
+                }
+            });
+
+
+            var $ = go.GraphObject.make;
+            var myModel = $(go.GraphLinksModel);
+
+            var a = [
+
+                { key: "Alpha", color: "lightblue" },
+                { key: "Beta", color: "orange" },
+                { key: "Zeta", color: "yellow" },
+            ];
+
+
+            myModel.nodeDataArray = a;
+            myModel.linkDataArray = [
+                { from: "Alpha", to: "Beta" }
+            ]
+
+            //Create a shape for two components.
+
+            myDiagram.nodeTemplate = $(go.Node, "Auto",
+                $(go.Shape, "Rectangle", new go.Binding("fill", "color"), { fill: "green", portId: "", cursor: "pointer",
+          fromLinkable: true, toLinkable: true }),
+                $(go.TextBlock, { margin: 14 }, new go.Binding("text", "key")))
+
+
+            //Create Links
+            myDiagram.linkTemplate =
+                $(go.Link,
+                    {
+                        routing: go.Link.Orthogonal,  // may be either Orthogonal or AvoidsNodes
+                        curve: go.Link.JumpGap
+                    },
+                    $(go.Shape),
+                    $(go.Shape, { toArrow: "Standard" })
+                );
+
+            // myModel.linkFromPortIdProperty = "fromPort";
+            // myModel.linkToPortIdProperty = "toPort";
+
+
+            myDiagram.model = myModel;// go.Model.fromJson(document.getElementById("mySavedModel").value);
+            zoomSlider = new ZoomSlider(myDiagram);
+
+
+//SIDE PANEL:
+
+
+myPalette =
+        $(go.Palette, "palette",  // must name or refer to the DIV HTML element
+          {
+            maxSelectionCount: 1,
+            nodeTemplateMap: myDiagram.nodeTemplateMap,  // share the templates used by myDiagram
+            model: new go.GraphLinksModel([  // specify the contents of the Palette
+              { text: "Start", figure: "Circle", fill: "green" },
+              { text: "Step" },
+              { text: "DB", figure: "Database", fill: "lightgray" },
+              { text: "???", figure: "Diamond", fill: "lightskyblue" },
+              { text: "End", figure: "Circle", fill: "red" },
+              { text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
+            ])
+          });
+
+
+
+
+
+
+
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <div id="sample">
+        <div style="width: 100%; display: flex; justify-content: space-between">
+            <div id="palette"
+                style="width: 100px; height: 500px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black">
+            </div>
+            <div id="myDiagramDiv" style="flex-grow: 1; height: 500px; border: solid 1px black"></div>
+        </div>
+
+    </div>
+</body>
+
+</html>
