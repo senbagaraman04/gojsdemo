@@ -3,6 +3,10 @@
     <head>
         <title> GOJS </title>
         <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+        
+  <link rel='stylesheet' href='ZoomSlider.css' />
+  <script src="ZoomSlider.js"></script>
+
         <script id="code">
             function init() {
               if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
@@ -240,6 +244,7 @@
                 { from: 3, to: 1, color: "purple" }
               ];
               myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+              zoomSlider = new ZoomSlider(myDiagram);
             }
           </script>
         </head>
