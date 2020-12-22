@@ -131,7 +131,8 @@
                       fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
                       toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true
                     },
-                    new go.Binding("fill", "color")),
+                   // gold if highlighted, white otherwise
+            new go.Binding("fill", "isHighlighted", function(h) { return h ? "gold" : "#ffffff"; }).ofObject()),
                   $(go.TextBlock,
                     {
                       font: "bold 14px sans-serif",
@@ -275,13 +276,50 @@
               ];
               myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
               zoomSlider = new ZoomSlider(myDiagram);
-            }
+
+           }
+
+
+           
+ // the Search functionality highlights all of the nodes that have at least one data property match a RegExp
+ function searchDiagram() {  // called by button
+       var input = document.getElementById("mySearch");
+       if (!input) return;
+      myDiagram.focus();
+       myDiagram.startTransaction("highlight search");
+       if (input.value) {
+        // search four different data properties for the string, any of which may match for success
+        // create a case insensitive RegExp from what the user typed
+        var regex = new RegExp(input.value, "i");
+         var results = myDiagram.findNodesByExample({ name: regex },
+          { text: regex });
+
+         myDiagram.highlightCollection(results);
+        // try to center the diagram at the first node that was found
+        if (results.count > 0) myDiagram.centerRect(results.first().actualBounds);
+      } else {  // empty string only clears highlighteds collection
+        myDiagram.clearHighlighteds();
+      }
+
+      myDiagram.commitTransaction("highlight search");
+    }
+
+
+
+
+
+
+
+
+
           </script>
         </head>
         <body onload="init()">
         <div id="sample">
           <div id="myDiagramDiv" style="border: solid 1px black; width:700px; height:700px"></div>
           <div id="myOverviewDiv"></div>
+          <input type="search" id="mySearch" onkeypress="if (event.keyCode === 13) searchDiagram()" />
+          <button onclick="searchDiagram()">Search</button>
         </div>
         </body>
         </html>
