@@ -122,7 +122,10 @@
               // Dragging from the Shape will start drawing a new link.
               myDiagram.nodeTemplate =
                 $(go.Node, "Auto",
-                  { locationSpot: go.Spot.Center, rotatable: true },
+                  { 
+                    //locationSpot: go.Spot.Center,
+                     rotatable: true
+                     },
                   $(go.Shape, "RoundedRectangle",
                     {
                       fill: "white", // the default fill, if there is no data bound value
@@ -133,13 +136,21 @@
                     },
                    // gold if highlighted, white otherwise
             new go.Binding("fill", "isHighlighted", function(h) { return h ? "gold" : "#ffffff"; }).ofObject()),
-                  $(go.TextBlock,
+              
+            $(go.Picture,
+      { margin: 30, width: 50, height: 50, background: "red" },
+      new go.Binding("source")),
+      $(go.TextBlock,
                     {
                       font: "bold 14px sans-serif",
                       stroke: '#333',
-                      margin: 6,  // make some extra space for the shape around the text
-                      isMultiline: false,  // don't allow newlines in text
-                      editable: true  // allow in-place editing by user
+                     // margin: 12,  // make some extra space for the shape around the text
+                     // isMultiline: false,  // don't allow newlines in text
+                      editable: true,  // allow in-place editing by user
+                      width: 170, height: 60,  margin: 10,
+                      verticalAlignment: go.Spot.Bottom
+                        
+
                     },
                     new go.Binding("text", "text").makeTwoWay()),  // the label shows the node data's text
                   { // this tooltip Adornment is shared by all nodes
@@ -191,7 +202,7 @@
                 });
                 return "Group " + g.data.key + ": " + g.data.text + "\n" + mems + " members including " + links + " links";
               }
-        
+
               // Groups consist of a title in the color given by the group node data
               // above a translucent gray rectangle surrounding the member parts
               myDiagram.groupTemplate =
@@ -200,6 +211,7 @@
                     selectionObjectName: "PANEL",  // selection handle goes around shape, not label
                     ungroupable: true  // enable Ctrl-Shift-G to ungroup a selected Group
                   },
+
                   $(go.TextBlock,
                     {
                       //alignment: go.Spot.Right,
@@ -262,11 +274,11 @@
         
               // Create the Diagram's Model:
               var nodeDataArray = [
-                { key: 1, text: "Alpha", color: "lightblue" },
-                { key: 2, text: "Beta", color: "orange" },
-                { key: 3, text: "Gamma", color: "lightgreen", group: 5 },
-                { key: 4, text: "Delta", color: "pink", group: 5 },
-                { key: 5, text: "Epsilon", color: "green", isGroup: true }
+                { key: 1, text: "Alpha", color: "lightblue", source: "assets/cat1.jfif"  },
+                { key: 2, text: "Beta", color: "orange", source: "assets/cat2.jfif"  },
+                { key: 3, text: "Gamma", color: "lightgreen", group: 5, source: "assets/cat1.jfif"  },
+                { key: 4, text: "Delta", color: "pink", group: 5, source: "assets/cat1.jfif"  },
+                { key: 5, text: "Epsilon", color: "green", isGroup: true, source: "assets/cat1.jfif"  }
               ];
               var linkDataArray = [
                 { from: 1, to: 2, color: "blue" },
