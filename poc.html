@@ -173,7 +173,12 @@
               // The link shape and arrowhead have their stroke brush data bound to the "color" property
               myDiagram.linkTemplate =
                 $(go.Link,
-                  { toShortLength: 3, relinkableFrom: true, relinkableTo: true },  // allow the user to relink existing links
+                  { toShortLength: 3,
+                    relinkableFrom: true,
+                    relinkableTo: true,
+                    routing: go.Link.AvoidsNodes,
+                    curve: go.Link.JumpOver
+                  },  // allow the user to relink existing links
                   $(go.Shape,
                     { strokeWidth: 2 },
                     new go.Binding("stroke", "color")),
@@ -328,7 +333,7 @@
         </head>
         <body onload="init()">
         <div id="sample">
-          <div id="myDiagramDiv" style="border: solid 1px black; width:700px; height:700px"></div>
+          <div id="myDiagramDiv" style="border: solid 1px black; width:900px; height:700px"></div>
           <div id="myOverviewDiv"></div>
           <input type="search" id="mySearch" onkeypress="if (event.keyCode === 13) searchDiagram()" />
           <button onclick="searchDiagram()">Search</button>
