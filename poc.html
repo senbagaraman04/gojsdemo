@@ -7,6 +7,7 @@
   <link rel='stylesheet' href='ZoomSlider.css' />
   <script src="ZoomSlider.js"></script>
   <script src="RotateMultipleTool.js"></script>
+  <script src="OrthogonalLinkReshapingTool.js"></script>
 
 
   <style type="text/css">
@@ -43,7 +44,10 @@
                     "commandHandler.archetypeGroupData": { text: "Group", isGroup: true, color: "blue" },
         
                     // enable undo & redo
-                    "undoManager.isEnabled": true
+                    "undoManager.isEnabled": true,
+
+                   //Reshape links 
+                    "linkReshapingTool": new OrthogonalLinkReshapingTool()
                   });
 
 
@@ -177,7 +181,9 @@
                     relinkableFrom: true,
                     relinkableTo: true,
                     routing: go.Link.AvoidsNodes,
-                    curve: go.Link.JumpOver
+                    curve: go.Link.JumpOver,
+                    reshapable: true,
+                    resegmentable: true
                   },  // allow the user to relink existing links
                   $(go.Shape,
                     { strokeWidth: 2 },
