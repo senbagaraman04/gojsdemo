@@ -119,31 +119,31 @@
 
       makeTemplate("Table", "assets/cat1.jfif", "forestgreen",
         [],
+        [makePort("OUT3", false)]);
+
+      makeTemplate("Join", "images/join.svg", "mediumorchid",
+        [makePort("L", true), makePort("R", true)],
+        [makePort("UL", false), makePort("ML", false), makePort("M", false), makePort("MR", false), makePort("UR", false)]);
+
+      makeTemplate("Project", "images/project.svg", "darkcyan",
+        [makePort("", true)],
         [makePort("OUT", false)]);
 
-      // makeTemplate("Join", "images/join.svg", "mediumorchid",
-      //   [makePort("L", true), makePort("R", true)],
-      //   [makePort("UL", false), makePort("ML", false), makePort("M", false), makePort("MR", false), makePort("UR", false)]);
+      makeTemplate("Filter", "images/filter.svg", "cornflowerblue",
+        [makePort("", true)],
+        [makePort("OUT", false), makePort("INV", false)]);
 
-      // makeTemplate("Project", "images/project.svg", "darkcyan",
-      //   [makePort("", true)],
-      //   [makePort("OUT", false)]);
+      makeTemplate("Group", "images/group.svg", "mediumpurple",
+        [makePort("", true)],
+        [makePort("OUT", false)]);
 
-      // makeTemplate("Filter", "images/filter.svg", "cornflowerblue",
-      //   [makePort("", true)],
-      //   [makePort("OUT", false), makePort("INV", false)]);
+      makeTemplate("Sort", "images/sort.svg", "sienna",
+        [makePort("", true)],
+        [makePort("OUT", false)]);
 
-      // makeTemplate("Group", "images/group.svg", "mediumpurple",
-      //   [makePort("", true)],
-      //   [makePort("OUT", false)]);
-
-      // makeTemplate("Sort", "images/sort.svg", "sienna",
-      //   [makePort("", true)],
-      //   [makePort("OUT", false)]);
-
-      // makeTemplate("Export", "images/upload.svg", "darkred",
-      //   [makePort("", true)],
-      //   []);
+      makeTemplate("Export", "images/upload.svg", "darkred",
+        [makePort("", true)],
+        []);
 
       myDiagram.linkTemplate =
         $(go.Link,

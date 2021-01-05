@@ -231,7 +231,13 @@
 
     // helper function for propagating results
     function setOutputLinks(node, color) {
-      node.findLinksOutOf().each(function (link) { link.findObject("SHAPE").stroke = color; });
+    //  console.log("Raman");
+    //  console.log(node);
+     // console.log(node.findLinksOutOf());
+      node.findLinksOutOf().each(function (link) {
+        
+         console.log(link.data);
+        link.findObject("SHAPE").stroke = color; });
     }
 
     // update nodes by the specific function for its type
