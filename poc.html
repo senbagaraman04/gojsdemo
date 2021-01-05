@@ -143,6 +143,7 @@
               
             $(go.Picture,
       { margin: 30, width: 50, height: 50, background: "red" },
+     
       new go.Binding("source")),
       $(go.TextBlock,
                     {
@@ -305,7 +306,8 @@
 
            
  // the Search functionality highlights all of the nodes that have at least one data property match a RegExp
- function searchDiagram() {  // called by button
+ function searchDiagram() { 
+    // called by button
        var input = document.getElementById("mySearch");
        if (!input) return;
       myDiagram.focus();
@@ -328,6 +330,14 @@
     }
 
 
+    function converttoJSON() {
+    //  alert("Raman");
+      var convertedJson = myDiagram.model.toJson();
+      alert(convertedJson);
+      console.log(myDiagram.model.toJson());
+    }
+
+
 
 
 
@@ -343,6 +353,7 @@
           <div id="myOverviewDiv"></div>
           <input type="search" id="mySearch" onkeypress="if (event.keyCode === 13) searchDiagram()" />
           <button onclick="searchDiagram()">Search</button>
+          <button onclick="converttoJSON()">Convert to jSON</button>
         </div>
         </body>
         </html>
